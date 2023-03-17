@@ -1,0 +1,3 @@
+keytool -genkey -alias tomcat -keyalg RSA -keystore C:\tmp\.keystore
+
+Password MUST be: changeit

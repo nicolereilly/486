@@ -1,0 +1,74 @@
+<html>
+<head>
+	<title>WebApp Security Notes</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+  <h2>WebApp Security Notes</h2>
+
+  <h3>Authentication</h3>
+  <p>
+  The servlet 2.3, 2.4, and 2.5 specs allow for the following kinds of authentication:
+  <ul>
+  <li><b>BASIC</b></li> 
+  Uses the browser's built-in login mechanism; sends username and base64 
+  encrypted password with every request<br>
+  NOTE: Using ethereal to look at network traffic shows that IE 6 and 7 do NOT
+  use base64 encoding.  The password is completely in the clear.
+  <li><b>DIGEST</b></li> 
+  encrypted password; not fully supported by browsers nor containers<br>
+  As far as I can tell, weblogic has never supported DIGEST, neither has
+  SunONE.  Tomcat 4.1 supports it to some extent, but not fully.  Old
+  browsers that use HTTP 1.0 cannot support this.<br>
+  TODO: test latest Tomcat
+  <li><b>HTTPS Client Authentication</b></li> 
+  browser-based certificate<br>
+  not practical for internet use and a pain for intranets
+  <li><b>Form</b></li> 
+  Java EE web container intercepts form-based request and uses
+  web.xml along with container-specific info to perform authentication<br>
+  <em>Usually the best choice for simple security requirements.</em>
+  </ul>
+  </p>
+
+  <p>
+  A more flexible choice is JAAS.  JAAS is still fairly new so the support
+  is spotty and not very consistent, but should get better soon.
+  Two free JAAS implementations:
+  <ul>
+  <li><b>Tagish</b></li>
+  Supports a file-based/MD5-hashed password configuration, JDBC configuration,
+  and a WINNT/2000 configuration.
+  <li><b>JAASLounge</b></li>
+  Supports an NT Lan Manager config, Active Directory config, and a Mapper config that can combine one or more delegate modules.
+  </ul>
+  This webapp uses the JAASLounge NTLM configuration which appears to work
+  fine with Win 2000 Active Directory.  The JAASLounge AD config requires
+  a lot more configuration (e.g., Kerberos).<br>
+  TODO: update this section
+  </p>
+
+
+  <h3>Authorization</h3>
+  <p>
+  Authorization can be permission-based or role-based.  Desktop apps are
+  usually permission-based while webapps are usually role-based.  The Java EE
+  specs address role-based permissions and have built-in support.  If a
+  client requires permission-based authorization (e.g., a user can create
+  a file and be the owner of that file), be aware that this is outside of
+  the Java EE specs and will be quite a challenge.  If you must implement this
+  kind of security, there is an article regarding struts/jaas integration
+  at www.mooreds.com that was published on the serverside.com.  IBM may
+  have more up-to-date info.
+  </p>
+  <p>
+  <em>Therefore, always try to use role-based authorization.</em>
+  </p>
+  <p>
+  Using roles directly in code is not very flexible.  It is best to create 
+  role references, at the servlet level, which can be mapped to different 
+  user roles, allowing redeployment without recompilation. 
+  </p>
+
+</body>
+</html>
